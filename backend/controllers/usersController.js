@@ -1,4 +1,4 @@
-import pool from "../db.js";
+import pool from "../utils/db.js";
 
 // GET all users
 export const getUsers = async (req, res) => {

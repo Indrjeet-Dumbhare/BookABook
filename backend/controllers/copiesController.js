@@ -1,7 +1,5 @@
-import express from 'express'
-import pool from "../db.js"
+import pool from "../utils/db.js"
 
-router.get('/copies', )
 
 export const getCopies = async (req, res) => {
   try {
@@ -18,7 +16,6 @@ export const getCopies = async (req, res) => {
   }
 }
 
-router.get('/copies/:id', )
 
 export const getCopiesById = async (req, res) => {
   try {
@@ -41,17 +38,20 @@ export const getCopiesById = async (req, res) => {
   }
 }
 
-router.post('/copies', )
-
 export const createCopy = async (req, res) => {
   try {
+    
     const { 
-      // book fields
+      //book field
       title, author, isbn, genre, language, published_year, publisher,
-      // copy fields
-      owner_id, condition, buy_price, rent_price_per_day, max_rent_days, location_city 
+      //copy field
+      owner_id, condition, buy_price, rent_price_per_day, max_rent_days, location_city,
+      for_rent, for_sale 
     } = req.body
 
+    if (!for_rent && !for_sale) {
+      return res.status(400).json({ message: "Copy must be listed for rent, sale, or both" })
+    }
     if (!owner_id || !condition) {
       return res.status(400).json({ message: "owner_id and condition are required" })
     }
@@ -77,10 +77,10 @@ export const createCopy = async (req, res) => {
 
     // now create the copy
     const result = await pool.query(`
-      INSERT INTO book_copies(book_id, owner_id, condition, buy_price, rent_price_per_day, max_rent_days, location_city)
-      VALUES($1, $2, $3, $4, $5, $6, $7)
-      RETURNING *
-    `, [book_id, owner_id, condition, buy_price || null, rent_price_per_day || null, max_rent_days || 30, location_city || null])
+    INSERT INTO book_copies(book_id, owner_id, condition, for_rent, for_sale, buy_price, rent_price_per_day, max_rent_days, location_city)
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    RETURNING *
+  `, [book_id, owner_id, condition, for_rent ?? false, for_sale ?? false, buy_price || null, rent_price_per_day || null, max_rent_days ?? 30, location_city || null])
 
     res.status(201).json({ message: "Copy listed", copy: result.rows[0] })
 
@@ -90,7 +90,6 @@ export const createCopy = async (req, res) => {
   }
 }
 
-router.put('/copies/:id', )
 
 export const updateCopy = async (req, res) => {
   try {
@@ -160,7 +159,6 @@ export const updateCopy = async (req, res) => {
   }
 }
 
-router.delete('/copies/:id', )
 
 export const deleteCopy = async (req, res) => {
   try {

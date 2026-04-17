@@ -1,8 +1,4 @@
-import express from 'express'
-import pool from "../db.js"
-
-const router = express.Router();
-
+import pool from "../utils/db.js"
 
 export const getBooks = async (req, res) => {
     try {
@@ -31,12 +27,12 @@ export const createBook = async (req, res) => {
   try {
     const {title ,author ,isbn ,genre ,language ,published_year ,publisher} = req.body;
 
-    if (!title || !author || !language) {
-      return res.status(400).json({
-        message: "title, author and language are required"
-      });
-    }
-    
+    if (!title?.trim() || !author?.trim() || !language?.trim()) {
+        return res.status(400).json({
+        message: "title, author and language cannot be empty"
+    });
+}
+
     const result = await pool.query(
       `INSERT INTO books(title ,author ,isbn ,genre ,language ,published_year ,publisher) 
           VALUES($1,$2,$3,$4,$5,$6,$7)
