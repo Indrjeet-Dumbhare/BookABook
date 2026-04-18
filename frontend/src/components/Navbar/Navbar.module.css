@@ -6,6 +6,10 @@
   border-bottom: 2px solid var(--amber);
   backdrop-filter: blur(8px);
 }
+.search{
+  display: flex;
+  align-items: center;
+}
 
 .inner {
   max-width: 1200px;
@@ -68,16 +72,34 @@
   flex-shrink: 0;
 }
 
+.search{
+position: absolute;
+margin: 0 180px;
+cursor: pointer;
+}
+
+.clearbtn{
+  position: absolute;
+  margin: 0 180px;
+  cursor: pointer;
+  font-size: 16px; 
+}
+
 .iconBtn {
   width: 13rem;
   height: 36px;
   border: none;
+  padding: 10px;
   background: var(--cream);
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--radius);
   transition: color 0.15s, background 0.15s;
+}
+
+.iconBtn::placeholder{
+text-align: center;
 }
 
 .iconBtn:hover {
@@ -162,3 +184,4 @@
     display: none;
   }
 }
+

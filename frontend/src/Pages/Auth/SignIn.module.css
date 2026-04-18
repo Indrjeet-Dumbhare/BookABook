@@ -1,0 +1,87 @@
+.container{
+  justify-content: center;
+  text-align: center;
+  display: flex;
+  margin: 100px;
+}
+
+.inner{
+  width: 450px;
+  height: 450px;
+  border-radius: 25px;
+  background-color: var(--dark-amber);
+  color: var(--cream);
+  box-shadow: 0 0 35px 15px grey;
+  border-color: var(--border-strong);
+  
+}
+
+
+.signup{
+  margin-top: 10px;
+}
+
+
+.heading{
+  margin-top: 35px;
+}
+
+.email{
+  margin-top: 25px;
+}
+
+.input{
+  border: none;
+  padding: 12px;
+  margin: 10px;
+  width: 300px;
+  font-size: 15px;
+  border-radius: 10px;
+  outline: none;
+}
+
+
+input::placeholder{
+ font-size: 16px;
+ text-align: center;
+}
+
+.btn{
+margin: 10px;
+background-color: var(--cream);
+width: 100px;
+height: 30px;
+border-radius: 10px;
+font-size: 14px;
+font-weight: 900;
+align-items: center;
+border: none;
+cursor: pointer;
+}
+
+.label{
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.ctabtn{
+margin: 5px;
+background-color: var(--cream);
+width: 100px;
+height: 30px;
+border-radius: 10px;
+font-size: 14px;
+font-weight: 900;
+border: none;
+cursor: pointer;
+}
+
+.checkbox{
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.signupbtn{
+  cursor: pointer;
+  font-weight: 900;
+}

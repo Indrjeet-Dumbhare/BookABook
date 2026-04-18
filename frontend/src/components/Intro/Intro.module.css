@@ -6,7 +6,8 @@
 
 .inner {
   max-width: 1200px;
-  margin: 20px auto;
+  
+  margin: 40px auto;
   padding: 0 2rem;
   display: flex;
   grid-template-columns: 1fr 1fr;
@@ -65,7 +66,7 @@
 .primaryBtn {
   height: 44px;
   padding: 0 1.75rem;
-  background: var(--ink);
+  background: var(--brown);
   color: var(--cream);
   border: none;
   border-radius: var(--radius);
@@ -76,8 +77,8 @@
 }
 
 .primaryBtn:hover {
-  background: var(--ink-light);
-  transform: translateY(-1px);
+  background: var(--amber);
+  transform: translateY(-4px);
 }
 
 .secondaryBtn {
@@ -93,6 +94,7 @@
 }
 
 .secondaryBtn:hover {
-  background: var(--parchment);
+  background: var(--amber);
+  color: var(--cream)
 }
 

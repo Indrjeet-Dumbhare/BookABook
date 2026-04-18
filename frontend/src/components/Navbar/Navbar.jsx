@@ -1,5 +1,13 @@
 import styles from "./Navbar.module.css";
+import { useState } from "react";
+import { IoMdSearch } from "react-icons/io";
+import { RxCross2 } from "react-icons/rx";
+import { useNavigate } from "react-router-dom";
+
 export const Navbar = () => {
+  const [value, setValue] = useState("");
+  const navigate = useNavigate();
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.inner}>
@@ -30,11 +38,15 @@ export const Navbar = () => {
           </li>
         </ul>
         <div className={styles.navActions}>
-          <input className={styles.iconBtn} type="Search"></input>
+          
+          {value==="" && <IoMdSearch className={styles.search} />}
+          <input className={styles.iconBtn} type="text" placeholder="Search" value={value} onChange={(e)=>setValue(e.target.value)}></input>
+          {value!=="" && <RxCross2 className={styles.clearbtn} onClick={()=> setValue("")} />}
+
           <button className={styles.cartBtn} aria-label="Cart">
             <span className={styles.cart}>Cart</span> 
           </button>
-          <button className={styles.ctaBtn}>
+          <button className={styles.ctaBtn} onClick={()=>{navigate("/signin")}}>
             <span className={styles.cta}></span> Sign in</button>
         </div>
       </div>
