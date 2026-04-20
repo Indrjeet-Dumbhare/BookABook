@@ -25,9 +25,10 @@
 .heading{
   margin: 25px;
   font-size: 40px;
+  font-weight: 900;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+
 }
-
-
 
 .input{
   border: none;

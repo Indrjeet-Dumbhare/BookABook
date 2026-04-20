@@ -19,7 +19,9 @@
 
 .heading{
   margin-top: 35px;
-  font-size: 40px
+  font-size: 40px;
+  font-weight: 900;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .email{
