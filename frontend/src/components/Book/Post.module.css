@@ -10,19 +10,27 @@
 }
 
 .card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
   box-shadow: var(--shadow-hover);
   border-color: var(--border-strong);
 }
 
 .cover {
-  height: 180px;
+  height: 230px;
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  padding: 1rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem;
+}
+
+.img{
+ 
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
 .coverShine {
@@ -88,9 +96,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.7rem 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  padding: 0.2rem 0;
   margin-bottom: 0.85rem;
 }
 
@@ -160,5 +166,6 @@
 }
 
 .buyBtn:hover {
-  background: var(--parchment);
+  background: var(--amber);
+  color: var(--cream)
 }

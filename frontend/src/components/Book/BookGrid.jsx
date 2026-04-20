@@ -1,42 +1,56 @@
 import styles from "./BookGrid.module.css";
 import { Post } from "./Post";
+import book1 from "../../assets/The God of Small Things.jpg"
+import book2 from "../../assets/Midnight's Children.png"
+import book3 from "../../assets/The White Tiger.jpg"
+import book4 from "../../assets/A Fine Balance.jpeg"
+import book5 from "../../assets/The Inheritance of Loss.jpg"
+import book6 from "../../assets/The Space Between Us.jpg"
+
 export const BookGrid = () => {
+  
   const BOOKS = [
     {
       title: "The God of Small Things",
       author: "Arundhati Roy",
       genre: "Literary Fiction",
-      coverColor: "#2D4A3E",
+      coverColor: "#ffffff",
+      cover: book1,
     },
     {
       title: "Midnight's Children",
       author: "Salman Rushdie",
       genre: "Magical Realism",
-      coverColor: "#4A2D2D",
+      coverColor: "#ffffff",
+      cover: book2,
     },
     {
       title: "The White Tiger",
       author: "Aravind Adiga",
       genre: "Dark Comedy",
-      coverColor: "#1E3148",
+      coverColor: "#ffffff",
+      cover: book3,
     },
     {
       title: "A Fine Balance",
       author: "Rohinton Mistry",
       genre: "Historical Fiction",
-      coverColor: "#3D3014",
+      coverColor: "#ffffff",
+      cover: book4,
     },
     {
       title: "The Inheritance of Loss",
       author: "Kiran Desai",
       genre: "Contemporary",
-      coverColor: "#1E3B2E",
+      coverColor: "#ffffff",
+      cover: book5,
     },
     {
       title: "The Space Between Us",
       author: "Thrity Umrigar",
       genre: "Drama",
-      coverColor: "#3B1E3A",
+      coverColor: "#ffffff",
+      cover: book6,
     },
   ];
   const FILTERS = [

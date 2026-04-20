@@ -7,14 +7,15 @@ export const Post = ({
   rentPrice = "49",
   buyPrice = "249",
   coverColor = "#2D4A3E",
+  cover,
   onRent,
   onBuy,
 }) => {
   return (
+    
     <section className={styles.card}>
       <div className={styles.cover} style={{ background: coverColor }}>
-        <div className={styles.coverTitle}>{title}</div>
-        <div className={styles.coverAuthor}>{author}</div>
+        <img className={styles.img} src={cover} alt={title} />
         <div className={styles.coverShine} />
       </div>
 
@@ -27,7 +28,10 @@ export const Post = ({
         <div className={styles.pricing}>
           <div className={styles.priceOption}>
             <span className={styles.priceLabel}>Rent </span>
-            <span className={styles.priceValue}>₹{rentPrice}<small>/week</small></span>
+            <span className={styles.priceValue}>
+              ₹{rentPrice}
+              <small>/week</small>
+            </span>
           </div>
           <div className={styles.priceSep} />
           <div className={styles.priceOption}>
