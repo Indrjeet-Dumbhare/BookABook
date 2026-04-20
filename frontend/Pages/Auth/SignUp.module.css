@@ -2,12 +2,12 @@
   justify-content: center;
   text-align: center;
   display: flex;
-  margin: 100px;
+  margin: 50px;
 }
 
 .inner{
   width: 450px;
-  height: 450px;
+  height: 620px;
   border-radius: 25px;
   background-color: var(--dark-amber);
   color: var(--cream);
@@ -23,33 +23,35 @@
 
 
 .heading{
-  margin-top: 35px;
+  margin: 25px;
+  font-size: 40px;
 }
 
-.email{
-  margin-top: 25px;
-}
+
 
 .input{
   border: none;
+  background-color: var(--cream);
+  color: var(--ink);
   padding: 12px;
-  margin: 10px;
+  margin: 7px;
   width: 300px;
   font-size: 15px;
   border-radius: 10px;
   outline: none;
 }
 
-
 input::placeholder{
+ color: var(--ink);
  font-size: 16px;
  text-align: center;
 }
 
 .btn{
-margin: 10px;
+margin: 12px;
 background-color: var(--cream);
-width: 100px;
+color: var(--ink);
+width: 140px;
 height: 30px;
 border-radius: 10px;
 font-size: 14px;
@@ -60,14 +62,15 @@ cursor: pointer;
 }
 
 .label{
-  margin-top: 20px;
+  margin-top: 10px;
   margin-bottom: 10px;
 }
 
 .ctabtn{
-margin: 5px;
+margin: 8px;
 background-color: var(--cream);
-width: 100px;
+color: var(--ink);
+width: 120px;
 height: 30px;
 border-radius: 10px;
 font-size: 14px;
@@ -84,4 +87,14 @@ cursor: pointer;
 .signupbtn{
   cursor: pointer;
   font-weight: 900;
+}
+
+.ctabtn:hover{
+  box-shadow: 0 0 30px 1px rgb(198, 129, 64);
+  transform: translateY(-4px);
+  
+}
+.btn:hover{
+  box-shadow: 0 0 30px 1px rgb(198, 129, 64);
+  transform: translateY(-4px);
 }

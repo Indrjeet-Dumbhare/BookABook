@@ -1,11 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import styles from "./SignIn.module.css";
+import { useState } from "react";
 
 export const SignIn = () => {
   const navigate = useNavigate();
   const formHandling = (e) =>{
     e.preventDefault();
+    setEmail('');
+    setPass('');
   }
+  const [ email, setEmail] = useState('');
+  const [ pass, setPass] = useState('');
+
   return (
     <div className={styles.container}>
       <div className={styles.inner}>
@@ -18,8 +24,12 @@ export const SignIn = () => {
               <input
                 type="email"
                 className={styles.input}
+                value={email}
                 id="floatingInput"
                 placeholder="Email address"
+                onChange={(e) =>{
+                  setEmail(e.target.value)
+                }}
               />
   
             </div>
@@ -28,7 +38,11 @@ export const SignIn = () => {
                 type="password"
                 className={styles.input}
                 id="floatingPassword"
+                value={pass}
                 placeholder="Password"
+                onChange={(e)=>{
+                  setPass(e.target.value)
+                }}
               />
              
             </div>
