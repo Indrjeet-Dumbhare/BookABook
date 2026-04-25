@@ -6,22 +6,16 @@ import {
   updateUser,
   deleteUser
 } from "../controllers/usersController.js";
+import { authenticate , requireAdmin } from '../middleware/authMiddleware.js'
 
 const router = express.Router();
 
-// GET all users
-router.get("/", getUsers);
+router.get('/users',authenticate, requireAdmin, getUsers);
 
-// GET user by ID
-router.get("/:id", getUserById);
+router.get('/users/:id', authenticate, getUserById );
 
-// CREATE user
-router.post("/", createUser);
+router.patch('/users/:id', authenticate, updateUser);
 
-// UPDATE user
-router.put("/:id", updateUser);
-
-// DELETE user
-router.delete("/:id", deleteUser);
+router.delete('/users/:id', authenticate, requireAdmin, deleteUser);
 
 export default router;

@@ -30,13 +30,20 @@ export const addCopyImages = async (req, res) => {
     }
 
     const check = await client.query(
-      "SELECT id FROM book_copies WHERE id = $1",
+      "SELECT id , owner_id FROM book_copies WHERE id = $1",
       [copyId]
     );
+
     if (check.rows.length === 0) {
       return res.status(404).json({ message: "Book copy not found" });
     }
 
+    if (check.rows[0].owner_id !== req.user.id && req.user.role !== 'admin') {
+      return res.status(403).json({ message: "You can only upload images to your own listings." });
+    }
+
+
+    await client.query("BEGIN");
     // Get current image count to offset display_order
     const orderResult = await client.query(
       `SELECT COUNT(*) AS count FROM copy_images WHERE book_copy_id = $1`,
@@ -46,7 +53,7 @@ export const addCopyImages = async (req, res) => {
 
     images = await Promise.all(files.map((file) => uploadToCloudinary(file)));
 
-    await client.query("BEGIN");
+    
 
     const insertedImages = [];
     for (let i = 0; i < images.length; i++) {
@@ -73,6 +80,7 @@ export const addCopyImages = async (req, res) => {
     client.release();
   }
 };
+
 
 export const deleteImages = async (req, res) => {
   try {
@@ -107,5 +115,3 @@ export const deleteImages = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-

@@ -1,0 +1,99 @@
+.container{
+  justify-content: center;
+  text-align: center;
+  display: flex;
+  margin: 100px;
+}
+
+.inner{
+  width: 450px;
+  height: 450px;
+  border-radius: 25px;
+  background-color: var(--dark-amber);
+  color: var(--cream);
+  box-shadow: 0 0 35px 15px grey;
+  border-color: var(--border-strong);
+  
+}
+
+
+.heading{
+  margin-top: 35px;
+  font-size: 40px;
+  font-weight: 900;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.email{
+  margin-top: 25px;
+}
+
+.input{
+  border: none;
+  background-color: var(--cream);
+  color: var(--ink);
+  padding: 12px;
+  margin: 7px;
+  width: 300px;
+  font-size: 15px;
+  border-radius: 10px;
+  outline: none;
+}
+
+
+input::placeholder{
+ font-size: 16px;
+ text-align: center;
+}
+
+.btn{
+margin: 12px;
+background-color: var(--cream);
+color: var(--ink);
+width: 140px;
+height: 30px;
+border-radius: 10px;
+font-size: 14px;
+font-weight: 900;
+align-items: center;
+border: none;
+cursor: pointer;
+}
+
+.label{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.ctabtn{
+margin: 8px;
+background-color: var(--cream);
+color: var(--ink);
+width: 120px;
+height: 30px;
+border-radius: 10px;
+font-size: 14px;
+font-weight: 900;
+border: none;
+cursor: pointer;
+}
+
+.checkbox{
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.signupbtn{
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.ctabtn:hover{
+  box-shadow: 0 0 30px 1px rgb(198, 129, 64);
+  transform: translateY(-4px);
+  
+}
+.btn:hover{
+  box-shadow: 0 0 30px 1px rgb(198, 129, 64);
+  transform: translateY(-4px);
+}

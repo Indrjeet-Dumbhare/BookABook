@@ -6,17 +6,19 @@ import {
     updateCopy,
     deleteCopy
 } from '../controllers/copiesController.js'
+import {authenticate,requireAdmin} from '../middleware/authMiddleware.js'
+
 
 const router = express.Router();
 
-router.get('/', getCopies);
+router.get ('/copies', getCopies);        
 
-router.get('/:id', getCopiesById);
+router.get ('/copies/:id', getCopiesById);       
 
-router.post('/', createCopy);
+router.post('/copies',authenticate, createCopy);  
 
-router.put('/:id', updateCopy);
+router.patch('/copies/:id',authenticate, updateCopy);
 
-router.delete('/:id', deleteCopy);
+router.delete('/copies/:id',authenticate, deleteCopy);
 
 export default router;

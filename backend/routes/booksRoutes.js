@@ -1,16 +1,18 @@
 import express from 'express'
 import { getBooks , getBookById , updateBook , deleteBook , createBook} from '../controllers/booksController.js'
+import {authenticate,requireAdmin} from '../middleware/authMiddleware.js'
+
 
 const router = express.Router();
 
-router.get('/', getBooks);
+router.get ('/books',getBooks);          
 
-router.get('/:id', getBookById);
+router.get ('/books/:id', getBookById);       
 
-router.post('/', createBook);
+router.post('/books',authenticate, createBook);        
 
-router.put('/:id', updateBook);
+router.patch('/books/:id', authenticate, updateBook);
 
-router.delete('/:id', deleteBook);
+router.delete('/books/:id', authenticate, requireAdmin, deleteBook);
 
 export default router;
