@@ -107,6 +107,20 @@ const login = async (req, res) => {
     return res.status(500).json({ error: 'Internal server error.' });
   }
 };
+s
+const getMe = async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, full_name, email, role, phone, address, created_at 
+       FROM users WHERE id = $1`,
+      [req.user.id]
+    );
+    return res.json({ user: result.rows[0] });
+  } catch (err) {
+    console.error('[getMe]', err);
+    return res.status(500).json({ error: 'Internal server error.' });
+  }
+};
 
 //  LOGOUT ------------------------------------
 const logout = (req, res) => {
@@ -114,4 +128,4 @@ const logout = (req, res) => {
   return res.json({ message: 'Logged out successfully.' });
 };
 
-export { register, login, logout };
+export { register, login, logout ,getMe};

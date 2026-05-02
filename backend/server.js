@@ -12,6 +12,7 @@ import copiesRouters from './routes/copiesRouters.js'
 import imagesRouters from './routes/imagesRoutes.js'
 import transactionsRouters from './routes/transactionsRoutes.js'
 import authRoutes from './routes/authRoutes.js'
+import paymentRoutes from './routes/paymentsRoutes.js'
 
 
 
@@ -31,6 +32,7 @@ app.use("/books", booksRouters);
 app.use("/copies", copiesRouters);
 app.use("/copies", imagesRouters);
 app.use("/transactions",transactionsRouters);
+app.use("/api/payments",paymentRoutes);
 
 app.listen(3000, () =>{
     console.log('Server running on http://localhost:3000')
