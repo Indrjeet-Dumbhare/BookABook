@@ -7,10 +7,10 @@ const TOKEN_EXPIRY = '7d';
 
 //  Cookie options ------------------------
 const cookieOptions = {
-  httpOnly: true,                                     // JS cannot read this cookie
-  secure: process.env.NODE_ENV === 'production',      // HTTPS only in production
-  sameSite: 'strict',                                 // prevents CSRF attacks
-  maxAge: 7 * 24 * 60 * 60 * 1000,                   // 7 days in milliseconds
+  httpOnly: true,
+  secure: false,            // keep false in development
+  sameSite: 'lax',          // 🔥 CHANGE THIS
+  maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
 //  REGISTER -------------------------------
@@ -58,9 +58,9 @@ const register = async (req, res) => {
     
     return res.status(201).json({ user });
   } catch (err) {
-    console.error('[register]', err);
-    return res.status(500).json({ error: 'Internal server error.' });
-  }
+  console.error('[register FULL ERROR]', err);
+  return res.status(500).json({ error: err.message }); // 🔥 CHANGE THIS
+}
 };
 
 //  LOGIN ----------------------------------------
@@ -107,6 +107,19 @@ const login = async (req, res) => {
     return res.status(500).json({ error: 'Internal server error.' });
   }
 };
+const getMe = async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, full_name, email, role, phone, address, created_at 
+       FROM users WHERE id = $1`,
+      [req.user.id]
+    );
+    return res.json({ user: result.rows[0] });
+  } catch (err) {
+    console.error('[getMe]', err);
+    return res.status(500).json({ error: 'Internal server error.' });
+  }
+};
 
 //  LOGOUT ------------------------------------
 const logout = (req, res) => {
@@ -114,4 +127,4 @@ const logout = (req, res) => {
   return res.json({ message: 'Logged out successfully.' });
 };
 
-export { register, login, logout };
+export { register, login, logout ,getMe};

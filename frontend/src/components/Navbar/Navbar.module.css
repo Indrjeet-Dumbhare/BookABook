@@ -26,11 +26,13 @@
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
+  cursor: pointer;
 }
 
 .logoIcon {
   font-size: 25px;
   margin-top: 3px;
+  cursor: pointer;
 }
 
 .logoText {
@@ -187,3 +189,16 @@ text-align: center;
   }
 }
 
+.profile{
+  font-size: 35px;
+  color: var(--cream);
+  cursor: pointer;
+  transition: scale 1s ease;
+  border: none;
+  border-radius: 40px;
+}
+
+.profile:hover{
+  transform: scale(1.15);
+  box-shadow: 0 0 30px 1px rgb(198, 129, 64);
+}

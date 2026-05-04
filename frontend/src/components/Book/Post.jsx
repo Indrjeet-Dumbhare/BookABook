@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import styles from "./Post.module.css";
 
 export const Post = ({
@@ -11,6 +12,8 @@ export const Post = ({
   onRent,
   onBuy,
 }) => {
+
+  const navigate = useNavigate();
   return (
     
     <section className={styles.card}>
@@ -44,7 +47,7 @@ export const Post = ({
           <button className={styles.rentBtn} onClick={onRent}>
             Rent now
           </button>
-          <button className={styles.buyBtn} onClick={onBuy}>
+          <button className={styles.buyBtn} onClick={() => navigate("/cart")}>
             Buy
           </button>
         </div>

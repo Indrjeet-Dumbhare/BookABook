@@ -16,7 +16,7 @@ router.get('/', authenticate, getTransactions);
 
 router.get('/:id', authenticate, getTransactionById);
 
-router.post('', authenticate, createTransaction);
+router.post('/', authenticate, createTransaction);
 
 router.patch('/:id/return', authenticate, markAsReturned);
 
