@@ -30,12 +30,29 @@ const createOrder = async (req, res) => {
     const tx = result.rows[0];
 
     if (tx.buyer_renter_id !== userId) {
-      return res.status(403).json({ error: 'Only the buyer/renter can initiate payment.' });
+      return res.status(403).json({
+        error: 'Only the buyer/renter can initiate payment.',
+      });
     }
 
     if (tx.status !== 'pending') {
       return res.status(400).json({
         error: `Payment can only be initiated for pending transactions. Current status: "${tx.status}".`,
+      });
+    }
+
+    // Check if a payment record already exists
+    const existingPayment = await pool.query(
+      `SELECT * FROM payments WHERE transaction_id = $1`,
+      [transaction_id]
+    );
+
+    if (
+      existingPayment.rows.length > 0 &&
+      existingPayment.rows[0].status === 'completed'
+    ) {
+      return res.status(400).json({
+        error: 'This transaction has already been paid.',
       });
     }
 
@@ -63,9 +80,9 @@ const createOrder = async (req, res) => {
 
     return res.status(201).json({
       order_id: order.id,
-      amount: order.amount,       // in paise
+      amount: order.amount,
       currency: order.currency,
-      key_id: process.env.RAZORPAY_KEY_ID,  // frontend needs this
+      key_id: process.env.RAZORPAY_KEY_ID,
       transaction_id,
     });
   } catch (err) {
@@ -74,11 +91,16 @@ const createOrder = async (req, res) => {
   }
 };
 
-//  VERIFY PAYMENT 
-/*
-  POST /api/payments/verify
-  Body: { razorpay_order_id, razorpay_payment_id, razorpay_signature, transaction_id }
-  Called by frontend after Razorpay checkout succeeds
+// ─── VERIFY PAYMENT ───────────────────────────────────────────
+/**
+ * POST /api/payments/verify
+ * Body: {
+ *   razorpay_order_id,
+ *   razorpay_payment_id,
+ *   razorpay_signature,
+ *   transaction_id
+ * }
+ * Called by frontend after Razorpay checkout succeeds
  */
 const verifyPayment = async (req, res) => {
   const {
@@ -88,38 +110,49 @@ const verifyPayment = async (req, res) => {
     transaction_id,
   } = req.body;
 
-  if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !transaction_id) {
-    return res.status(400).json({ error: 'All payment fields are required.' });
+  if (
+    !razorpay_order_id ||
+    !razorpay_payment_id ||
+    !razorpay_signature ||
+    !transaction_id
+  ) {
+    return res.status(400).json({
+      error: 'All payment fields are required.',
+    });
   }
 
-  // 1. Verify signature
+  // Verify signature
   const body = `${razorpay_order_id}|${razorpay_payment_id}`;
+
   const expectedSignature = crypto
     .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
     .update(body)
     .digest('hex');
 
   if (expectedSignature !== razorpay_signature) {
-    return res.status(400).json({ error: 'Invalid payment signature. Payment verification failed.' });
+    return res.status(400).json({
+      error: 'Invalid payment signature. Payment verification failed.',
+    });
   }
 
   const client = await pool.connect();
+
   try {
     await client.query('BEGIN');
 
-    // 2. Update payment record
+    // Update payment record
     await client.query(
       `UPDATE payments
        SET status = 'completed',
            razorpay_payment_id = $1,
-           razorpay_signature  = $2,
-           payment_method      = 'razorpay',
-           paid_at             = now()
+           razorpay_signature = $2,
+           payment_method = 'razorpay',
+           paid_at = now()
        WHERE transaction_id = $3`,
       [razorpay_payment_id, razorpay_signature, transaction_id]
     );
 
-    // 3. Activate the transaction
+    // Activate transaction
     await client.query(
       `UPDATE transactions
        SET status = 'active'
@@ -129,19 +162,24 @@ const verifyPayment = async (req, res) => {
 
     await client.query('COMMIT');
 
-    return res.json({ message: 'Payment verified. Transaction is now active.' });
+    return res.json({
+      message: 'Payment verified. Transaction is now active.',
+    });
   } catch (err) {
     await client.query('ROLLBACK');
     console.error('[verifyPayment]', err);
-    return res.status(500).json({ error: 'Internal server error.' });
+
+    return res.status(500).json({
+      error: 'Internal server error.',
+    });
   } finally {
     client.release();
   }
 };
 
-//  GET PAYMENT BY TRANSACTION 
-/*
-  GET /api/payments/:transaction_id
+// ─── GET PAYMENT BY TRANSACTION ───────────────────────────────
+/**
+ * GET /api/payments/:transaction_id
  */
 const getPayment = async (req, res) => {
   const { transaction_id } = req.params;
@@ -151,13 +189,16 @@ const getPayment = async (req, res) => {
     const result = await pool.query(
       `SELECT p.*, t.buyer_renter_id, t.seller_owner_id
        FROM payments p
-       JOIN transactions t ON t.id = p.transaction_id
+       JOIN transactions t
+       ON t.id = p.transaction_id
        WHERE p.transaction_id = $1`,
       [transaction_id]
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Payment not found.' });
+      return res.status(404).json({
+        error: 'Payment not found.',
+      });
     }
 
     const payment = result.rows[0];
@@ -167,13 +208,18 @@ const getPayment = async (req, res) => {
       payment.buyer_renter_id !== userId &&
       payment.seller_owner_id !== userId
     ) {
-      return res.status(403).json({ error: 'Access denied.' });
+      return res.status(403).json({
+        error: 'Access denied.',
+      });
     }
 
     return res.json(payment);
   } catch (err) {
     console.error('[getPayment]', err);
-    return res.status(500).json({ error: 'Internal server error.' });
+
+    return res.status(500).json({
+      error: 'Internal server error.',
+    });
   }
 };
 

@@ -5,7 +5,7 @@ import { SignIn } from "./Pages/Auth/SignIn";
 import { SignUp } from "./Pages/Auth/SignUp";
 import { Profile } from "./Pages/Profile/Profile";
 import { Cart } from "./Pages/Cart/Cart";
-import { UploadBook } from "./pages/UploadBook/UploadBook";
+import { UploadBook } from "./Pages/UploadBook/UploadBook";
 
 function App() {
   return (
