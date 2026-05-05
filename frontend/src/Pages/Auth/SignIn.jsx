@@ -17,12 +17,12 @@ export const SignIn = () => {
     setLoading(true);
 
     try {
-      await axios.post(
+      const res = await axios.post(
         "http://localhost:3000/auth/user/login",
         { email, password },
         { withCredentials: true }
       );
-
+      
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.error || "Something went wrong.");
@@ -77,7 +77,7 @@ export const SignIn = () => {
         </form>
 
         <button className={styles.btn} onClick={() => navigate("/")}>
-          Go Back
+          Go to Home
         </button>
 
         <div className={styles.signup}>

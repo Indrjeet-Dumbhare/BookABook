@@ -7,10 +7,10 @@ const TOKEN_EXPIRY = '7d';
 
 //  Cookie options ------------------------
 const cookieOptions = {
-  httpOnly: true,                                     // JS cannot read this cookie
-  secure: process.env.NODE_ENV === 'production',      // HTTPS only in production
-  sameSite: 'strict',                                 // prevents CSRF attacks
-  maxAge: 7 * 24 * 60 * 60 * 1000,                   // 7 days in milliseconds
+  httpOnly: true,
+  secure: false,            // keep false in development
+  sameSite: 'lax',
+  maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
 //  REGISTER -------------------------------
@@ -33,6 +33,7 @@ const register = async (req, res) => {
     const existing = await pool.query(
       `SELECT id FROM users WHERE email = $1`, [email]
     );
+
     if (existing.rows.length > 0) {
       return res.status(409).json({ error: 'Email already registered.' });
     }
@@ -55,11 +56,12 @@ const register = async (req, res) => {
     );
 
     res.cookie('token', token, cookieOptions);
-    
+
     return res.status(201).json({ user });
+
   } catch (err) {
-    console.error('[register]', err);
-    return res.status(500).json({ error: 'Internal server error.' });
+    console.error('[register FULL ERROR]', err);
+    return res.status(500).json({ error: err.message });
   }
 };
 
@@ -88,6 +90,7 @@ const login = async (req, res) => {
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password_hash);
+
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Invalid email or password.' });
     }
@@ -101,13 +104,16 @@ const login = async (req, res) => {
     res.cookie('token', token, cookieOptions);
 
     const { password_hash, ...safeUser } = user;
+
     return res.json({ user: safeUser });
+
   } catch (err) {
     console.error('[login]', err);
     return res.status(500).json({ error: 'Internal server error.' });
   }
 };
-s
+
+//  GET ME ----------------------------------------
 const getMe = async (req, res) => {
   try {
     const result = await pool.query(
@@ -115,7 +121,9 @@ const getMe = async (req, res) => {
        FROM users WHERE id = $1`,
       [req.user.id]
     );
+
     return res.json({ user: result.rows[0] });
+
   } catch (err) {
     console.error('[getMe]', err);
     return res.status(500).json({ error: 'Internal server error.' });
@@ -128,4 +136,4 @@ const logout = (req, res) => {
   return res.json({ message: 'Logged out successfully.' });
 };
 
-export { register, login, logout ,getMe};
+export { register, login, logout, getMe };

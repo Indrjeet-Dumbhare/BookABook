@@ -20,12 +20,12 @@ export const SignUp = () => {
     setLoading(true);
 
     try {
-      await axios.post(
+      const res = await axios.post(
         "http://localhost:3000/auth/user/register",
         { first_name, last_name, email, password, phone },
         { withCredentials: true }  // same as credentials: "include" — required for cookies
       );
-
+     
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.error || "Something went wrong.");
@@ -108,7 +108,7 @@ export const SignUp = () => {
         </form>
 
         <button className={styles.btn} onClick={() => navigate("/")}>
-          Go Back
+          Go to Home
         </button>
 
         <div className={styles.signup}>
