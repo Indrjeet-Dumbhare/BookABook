@@ -18,7 +18,11 @@ export const Cart = () => {
     },
   ]);
 
-  // 🔥 Quantity handlers
+  // Replace these with actual values from auth/database
+  const yourAuthToken = localStorage.getItem("token");
+  const yourTransactionId = 1;
+
+  // Quantity handlers
   const increaseQty = (id) => {
     setCartItems((prev) =>
       prev.map((item) =>
@@ -43,56 +47,61 @@ export const Cart = () => {
     setCartItems((prev) => prev.filter((item) => item.id !== id));
   };
 
-  // 🔥 Total calculation
+  // Total calculation
   const totalAmount = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
 
-  // 🔥 Load Razorpay
+  // Load Razorpay script
   const loadRazorpay = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
+
       script.onload = () => resolve(true);
       script.onerror = () => resolve(false);
+
       document.body.appendChild(script);
     });
   };
 
-  // 🔥 Handle Payment
+  // Handle Payment
   const handlePayment = async () => {
     const loaded = await loadRazorpay();
+
     if (!loaded) {
       alert("Razorpay failed to load");
       return;
     }
 
     try {
-      // 1. Create order — send transaction_id, not amount
-      const res = await fetch("http://localhost:3000/api/payments/create-order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${yourAuthToken}`, // required — backend reads req.user
-        },
-        body: JSON.stringify({
-          transaction_id: yourTransactionId, // pass this as a prop or from context
-        }),
-      });
+      // Create order
+      const res = await fetch(
+        "http://localhost:3000/api/payments/create-order",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${yourAuthToken}`,
+          },
+          body: JSON.stringify({
+            transaction_id: yourTransactionId,
+          }),
+        }
+      );
 
       const data = await res.json();
 
       const options = {
-        key: data.key_id,           // ✅ use key from backend, not hardcoded
+        key: data.key_id,
         amount: data.amount,
         currency: data.currency,
         name: "BookABook",
         description: "Order Payment",
-        order_id: data.order_id,    // ✅ was data.id — backend returns order_id
+        order_id: data.order_id,
 
         handler: async function (response) {
-          // 2. Verify payment — this is what actually marks the transaction active
           try {
             const verifyRes = await fetch(
               "http://localhost:3000/api/payments/verify",
@@ -104,8 +113,10 @@ export const Cart = () => {
                 },
                 body: JSON.stringify({
                   razorpay_order_id: response.razorpay_order_id,
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature: response.razorpay_signature,
+                  razorpay_payment_id:
+                    response.razorpay_payment_id,
+                  razorpay_signature:
+                    response.razorpay_signature,
                   transaction_id: data.transaction_id,
                 }),
               }
@@ -115,7 +126,7 @@ export const Cart = () => {
 
             if (verifyRes.ok) {
               alert("Payment Successful ✅");
-              navigate("/orders"); // or wherever after payment
+              navigate("/orders");
             } else {
               alert(`Verification failed: ${verifyData.error}`);
             }
@@ -129,6 +140,7 @@ export const Cart = () => {
           name: "Saurabh",
           email: "test@gmail.com",
         },
+
         theme: {
           color: "#ff6b00",
         },
@@ -148,8 +160,11 @@ export const Cart = () => {
       <div className={styles.header}>
         <h2>
           My Cart{" "}
-          <span className={styles.count}>{cartItems.length}</span>
+          <span className={styles.count}>
+            {cartItems.length}
+          </span>
         </h2>
+
         <RxCross2
           className={styles.close}
           onClick={() => {
@@ -172,13 +187,21 @@ export const Cart = () => {
       <hr />
 
       {/* Total */}
-      <div style={{ padding: "10px", fontWeight: "bold" }}>
+      <div
+        style={{
+          padding: "10px",
+          fontWeight: "bold",
+        }}
+      >
         Total: ₹{totalAmount}
       </div>
 
       {/* Pay Button */}
       <div className={styles.cta}>
-        <button className={styles.ctabtn} onClick={handlePayment}>
+        <button
+          className={styles.ctabtn}
+          onClick={handlePayment}
+        >
           Pay Now
         </button>
       </div>
