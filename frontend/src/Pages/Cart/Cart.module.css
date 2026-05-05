@@ -112,3 +112,28 @@ hr {
 .suggest {
   margin-top: 20px;
 }
+
+.cta{
+  background-color: var(--brown);
+  color: var(--cream);
+  width: 150px;
+  height: 40px;
+  border-radius: 5px;
+  text-align: center;
+  padding: 5px 0px;
+  font-weight: 900;
+  font-size: 20px;
+  cursor: pointer;
+  position: relative;
+  left: 1050px;
+  top: 20px;
+}
+
+.ctabtn{
+  cursor: pointer;
+}
+
+.cta:hover{
+  background-color: var(--dark-amber);
+  color: var(--white);
+}

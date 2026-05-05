@@ -4,7 +4,7 @@ import "./App.css";
 import { SignIn } from "./Pages/Auth/SignIn";
 import { SignUp } from "./Pages/Auth/SignUp";
 import { Profile } from "./Pages/Profile/Profile";
-import { Cart } from "./Pages/Checkout/Cart";
+import { Cart } from "./Pages/Cart/Cart";
 
 function App() {
   return (
