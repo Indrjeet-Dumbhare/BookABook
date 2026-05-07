@@ -51,6 +51,17 @@ export const Navbar = () => {
         </span>
         <ul className={styles.navLinks}>
           <li>
+            <a
+              href="#"
+              className={styles.navLink}
+              onClick={() => {
+                navigate("/uploadbook");
+              }}
+            >
+              Upload
+            </a>
+          </li>
+          <li>
             <a href="#" className={styles.navLink}>
               Browse
             </a>
