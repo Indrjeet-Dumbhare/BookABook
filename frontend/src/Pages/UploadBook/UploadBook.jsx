@@ -49,7 +49,7 @@ export const UploadBook = () => {
         },
         {
           withCredentials: true,
-        },
+        }
       );
 
       const copyId = copyRes.data.copy.id;
@@ -72,7 +72,7 @@ export const UploadBook = () => {
               "Content-Type": "multipart/form-data",
             },
             withCredentials: true,
-          },
+          }
         );
       }
 
@@ -220,8 +220,10 @@ export const UploadBook = () => {
               <div className={styles.imageFields}>
                 <div className={styles.imageRow}>
                   <span className={styles.imageLabel}>Front Cover</span>
+
                   <label className={styles.uploadBtn}>
                     Add Photo
+
                     <input
                       type="file"
                       hidden
@@ -237,8 +239,10 @@ export const UploadBook = () => {
 
                 <div className={styles.imageRow}>
                   <span className={styles.imageLabel}>Back Cover</span>
+
                   <label className={styles.uploadBtn}>
                     Add Photo
+
                     <input
                       type="file"
                       hidden
@@ -254,8 +258,10 @@ export const UploadBook = () => {
 
                 <div className={styles.imageRow}>
                   <span className={styles.imageLabel}>Title Page</span>
+
                   <label className={styles.uploadBtn}>
                     Add Photo
+
                     <input
                       type="file"
                       hidden
@@ -271,8 +277,10 @@ export const UploadBook = () => {
 
                 <div className={styles.imageRow}>
                   <span className={styles.imageLabel}>Inside Pages</span>
+
                   <label className={styles.uploadBtn}>
                     Add Photo
+
                     <input
                       type="file"
                       hidden
@@ -290,8 +298,10 @@ export const UploadBook = () => {
                   <span className={styles.imageLabel}>
                     Damaged Areas (if any)
                   </span>
+
                   <label className={styles.uploadBtn}>
                     Add Photo
+
                     <input
                       type="file"
                       hidden
@@ -307,12 +317,11 @@ export const UploadBook = () => {
               </div>
             </div>
 
-            <div className={styles.btncontainer} >
+            <div className={styles.btncontainer}>
               <button className={styles.button} type="submit">
-              Upload Book
-            </button>
+                Upload Book
+              </button>
             </div>
-            
           </form>
         </div>
       </div>
