@@ -4,10 +4,15 @@ import pool from "../utils/db.js"
 export const getCopies = async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT bc.*, b.title, b.author, b.genre, u.full_name as owner_name
+      SELECT bc.*, b.title, b.author, b.genre, u.full_name as owner_name,
+             COALESCE(
+               json_agg(ci.image_url ORDER BY ci.display_order) FILTER (WHERE ci.image_url IS NOT NULL), '[]'
+             ) AS images
       FROM book_copies bc
       JOIN books b ON bc.book_id = b.id
       JOIN users u ON bc.owner_id = u.id
+      LEFT JOIN copy_images ci ON ci.book_copy_id = bc.id
+      GROUP BY bc.id, b.title, b.author, b.genre, u.full_name
     `)
     res.json({ copies: result.rows, total: result.rows.length })
   } catch (error) {
@@ -40,32 +45,30 @@ export const getCopiesById = async (req, res) => {
 
 export const createCopy = async (req, res) => {
   try {
-    
+    // ✅ owner_id comes from the authenticated cookie (set by auth middleware), not req.body
+    const owner_id = req.user.id
+
     const { 
-      //book field
+      // book fields
       title, author, isbn, genre, language, published_year, publisher,
-      //copy field
-      owner_id, condition, buy_price, rent_price_per_day, max_rent_days, location_city,
+      // copy fields
+      condition, buy_price, rent_price_per_day, max_rent_days, location_city,
       for_rent, for_sale 
     } = req.body
 
     if (!for_rent && !for_sale) {
       return res.status(400).json({ message: "Copy must be listed for rent, sale, or both" })
     }
-    if (!owner_id || !condition) {
-      return res.status(400).json({ message: "owner_id and condition are required" })
+    if (!condition) {
+      return res.status(400).json({ message: "condition is required" })
     }
 
-    const owner = await pool.query(`SELECT id FROM users WHERE id = $1`, [owner_id])
-    if (owner.rows.length === 0) {
-      return res.status(404).json({ message: "Owner not found" })
-    }
+    // ✅ No need to validate owner existence — req.user is already verified by auth middleware
 
-    // check if book exists, if not create it
+    // Check if book exists by ISBN, if not create it
     let book = await pool.query(`SELECT id FROM books WHERE isbn = $1`, [isbn])
 
     if (book.rows.length === 0) {
-      // book doesnt exist, create it first
       book = await pool.query(`
         INSERT INTO books(title, author, isbn, genre, language, published_year, publisher)
         VALUES($1, $2, $3, $4, $5, $6, $7)
@@ -75,12 +78,11 @@ export const createCopy = async (req, res) => {
 
     const book_id = book.rows[0].id
 
-    // now create the copy
     const result = await pool.query(`
-    INSERT INTO book_copies(book_id, owner_id, condition, for_rent, for_sale, buy_price, rent_price_per_day, max_rent_days, location_city)
-    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)
-    RETURNING *
-  `, [book_id, owner_id, condition, for_rent ?? false, for_sale ?? false, buy_price || null, rent_price_per_day || null, max_rent_days ?? 30, location_city || null])
+      INSERT INTO book_copies(book_id, owner_id, condition, for_rent, for_sale, buy_price, rent_price_per_day, max_rent_days, location_city)
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      RETURNING *
+    `, [book_id, owner_id, condition, for_rent ?? false, for_sale ?? false, buy_price || null, rent_price_per_day || null, max_rent_days ?? 30, location_city || null])
 
     res.status(201).json({ message: "Copy listed", copy: result.rows[0] })
 
@@ -94,6 +96,9 @@ export const createCopy = async (req, res) => {
 export const updateCopy = async (req, res) => {
   try {
     const copyId = req.params.id
+    // ✅ Authenticated user from cookie
+    const requesterId = req.user.id
+
     const {
       condition, status,
       for_rent, for_sale,
@@ -101,12 +106,17 @@ export const updateCopy = async (req, res) => {
       max_rent_days, location_city
     } = req.body
 
-    // Fetch current copy state
+    // Fetch current copy state including owner
     const existing = await pool.query(
-      `SELECT status FROM book_copies WHERE id = $1`, [copyId]
+      `SELECT status, owner_id FROM book_copies WHERE id = $1`, [copyId]
     )
     if (existing.rows.length === 0) {
       return res.status(404).json({ message: "Copy not found" })
+    }
+
+    // Ownership check — only the owner can update their copy
+    if (existing.rows[0].owner_id !== requesterId) {
+      return res.status(403).json({ message: "Forbidden: you do not own this copy" })
     }
 
     const currentStatus = existing.rows[0].status
@@ -163,12 +173,19 @@ export const updateCopy = async (req, res) => {
 export const deleteCopy = async (req, res) => {
   try {
     const copyId = req.params.id
+    // ✅ Authenticated user from cookie
+    const requesterId = req.user.id
 
     const copy = await pool.query(
-      `SELECT status FROM book_copies WHERE id = $1`, [copyId]
+      `SELECT status, owner_id FROM book_copies WHERE id = $1`, [copyId]
     )
     if (copy.rows.length === 0) {
       return res.status(404).json({ message: "Copy not found" })
+    }
+
+    // ✅ Ownership check — only the owner can delete their copy
+    if (copy.rows[0].owner_id !== requesterId) {
+      return res.status(403).json({ message: "Forbidden: you do not own this copy" })
     }
 
     const currentStatus = copy.rows[0].status
@@ -180,7 +197,7 @@ export const deleteCopy = async (req, res) => {
       return res.status(409).json({ message: "Cannot delete a copy that has been sold" })
     }
 
-    // Also block if any non-cancelled transaction exists (pending, active, overdue, returned)
+    // Block if any non-cancelled transaction exists
     const activeTx = await pool.query(
       `SELECT 1 FROM transactions
        WHERE book_copy_id = $1

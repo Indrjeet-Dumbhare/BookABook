@@ -39,14 +39,6 @@ const createOrder = async (req, res) => {
       });
     }
 
-    // Check if a payment record already exists
-    const existingPayment = await pool.query(
-      `SELECT * FROM payments WHERE transaction_id = $1`, [transaction_id]
-    );
-    if (existingPayment.rows.length > 0 && existingPayment.rows[0].status === 'completed') {
-      return res.status(400).json({ error: 'This transaction has already been paid.' });
-    }
-
     // Razorpay expects amount in paise (₹1 = 100 paise)
     const amountInPaise = Math.round(tx.amount * 100);
 
@@ -82,11 +74,11 @@ const createOrder = async (req, res) => {
   }
 };
 
-// ─── VERIFY PAYMENT ───────────────────────────────────────────────────────────
-/**
- * POST /api/payments/verify
- * Body: { razorpay_order_id, razorpay_payment_id, razorpay_signature, transaction_id }
- * Called by frontend after Razorpay checkout succeeds
+//  VERIFY PAYMENT 
+/*
+  POST /api/payments/verify
+  Body: { razorpay_order_id, razorpay_payment_id, razorpay_signature, transaction_id }
+  Called by frontend after Razorpay checkout succeeds
  */
 const verifyPayment = async (req, res) => {
   const {
@@ -147,9 +139,9 @@ const verifyPayment = async (req, res) => {
   }
 };
 
-// ─── GET PAYMENT BY TRANSACTION ───────────────────────────────────────────────
-/**
- * GET /api/payments/:transaction_id
+//  GET PAYMENT BY TRANSACTION 
+/*
+  GET /api/payments/:transaction_id
  */
 const getPayment = async (req, res) => {
   const { transaction_id } = req.params;

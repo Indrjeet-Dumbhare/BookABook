@@ -1,0 +1,95 @@
+.container {
+  display: flex;
+  justify-content: center;
+  margin: 50px 0;
+}
+
+.inner {
+  width: 1100px;
+  background-color: white;
+  border-radius: 30px;
+  padding: 40px;
+}
+
+.heading {
+  font-size: 35px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: var(--brown);
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.input {
+  height: 50px;
+  border: none;
+  background-color: rgb(243, 242, 242);
+  border-radius: 10px;
+  padding-left: 15px;
+  font-size: 15px;
+}
+
+.input:focus {
+  outline: none;
+}
+
+.checkboxContainer {
+  display: flex;
+  gap: 30px;
+  margin-top: 25px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--brown);
+}
+
+.imageRow{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  max-width: 500px;
+}
+
+.imageLabel{
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--brown);
+}
+
+.uploadBtn{
+  width: 120px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: var(--brown);
+  color: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: 700;
+  transition: 0.3s ease;
+}
+
+.uploadBtn:hover{
+  background-color: var(--dark-amber);
+  transform: translateY(-2px);
+}
+
+.button{
+  width: 120px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: var(--brown);
+  color: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: 700;
+  transition: 0.3s ease;
+  
+}

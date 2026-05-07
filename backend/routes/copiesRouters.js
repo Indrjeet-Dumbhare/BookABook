@@ -11,14 +11,14 @@ import {authenticate,requireAdmin} from '../middleware/authMiddleware.js'
 
 const router = express.Router();
 
-router.get ('/copies', getCopies);        
+router.get ('/', getCopies);        
 
-router.get ('/copies/:id', getCopiesById);       
+router.get ('/:id', getCopiesById);       
 
-router.post('/copies',authenticate, createCopy);  
+router.post('/',authenticate, createCopy);  
 
-router.patch('/copies/:id',authenticate, updateCopy);
+router.patch('/:id',authenticate, updateCopy);
 
-router.delete('/copies/:id',authenticate, deleteCopy);
+router.delete('/:id',authenticate, deleteCopy);
 
 export default router;

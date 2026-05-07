@@ -1,58 +1,12 @@
+import { useState, useEffect } from "react";
 import styles from "./BookGrid.module.css";
 import { Post } from "./Post";
-import book1 from "../../assets/The God of Small Things.jpg"
-import book2 from "../../assets/Midnight's Children.png"
-import book3 from "../../assets/The White Tiger.jpg"
-import book4 from "../../assets/A Fine Balance.jpeg"
-import book5 from "../../assets/The Inheritance of Loss.jpg"
-import book6 from "../../assets/The Space Between Us.jpg"
 
 export const BookGrid = () => {
-  
-  const BOOKS = [
-    {
-      title: "The God of Small Things",
-      author: "Arundhati Roy",
-      genre: "Literary Fiction",
-      coverColor: "#ffffff",
-      cover: book1,
-    },
-    {
-      title: "Midnight's Children",
-      author: "Salman Rushdie",
-      genre: "Magical Realism",
-      coverColor: "#ffffff",
-      cover: book2,
-    },
-    {
-      title: "The White Tiger",
-      author: "Aravind Adiga",
-      genre: "Dark Comedy",
-      coverColor: "#ffffff",
-      cover: book3,
-    },
-    {
-      title: "A Fine Balance",
-      author: "Rohinton Mistry",
-      genre: "Historical Fiction",
-      coverColor: "#ffffff",
-      cover: book4,
-    },
-    {
-      title: "The Inheritance of Loss",
-      author: "Kiran Desai",
-      genre: "Contemporary",
-      coverColor: "#ffffff",
-      cover: book5,
-    },
-    {
-      title: "The Space Between Us",
-      author: "Thrity Umrigar",
-      genre: "Drama",
-      coverColor: "#ffffff",
-      cover: book6,
-    },
-  ];
+  const [copies, setCopies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const FILTERS = [
     "All",
     "Fiction",
@@ -62,39 +16,121 @@ export const BookGrid = () => {
     "Mystery",
     "Self-Help",
   ];
-  return (
-    <>
+
+  const [activeFilter, setActiveFilter] = useState("All");
+
+  useEffect(() => {
+    const fetchCopies = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const res = await fetch("http://localhost:3000/copies");
+        if (!res.ok) throw new Error("Failed to fetch books");
+        const data = await res.json();
+        setCopies(data.copies);
+  
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCopies();
+  }, []);
+
+  // Filter copies by genre based on active filter
+  const filteredCopies =
+    activeFilter === "All"
+      ? copies
+      : copies.filter((copy) =>
+          copy.genre?.toLowerCase().includes(activeFilter.toLowerCase())
+        );
+
+  // For trending: sort by most recently added (assuming id is sequential)
+  const trendingCopies = [...copies].sort((a, b) => b.id - a.id).slice(0, 6);
+
+  if (loading) {
+    return (
       <section className={styles.section}>
-        <div className={styles.heading}>
-          <h3>Featured Books</h3>
-        </div>
-        <div className={styles.filters}>
-          {FILTERS.map((f, i) => (
-            <button
-              key={f}
-              className={`${styles.filterBtn} ${i === 0 ? styles.active : ""}`}
-            >
-              {f}
-            </button>
-          ))}
-        </div>
-        <div className={styles.grid}>
-          {BOOKS.map((book) => (
-            <Post key={book.title} {...book} />
-          ))}
-          
-        </div>
-       
-        <div className={styles.heading}>
-          {" "}
-          <h3>Trending Books</h3>
-        </div>
-        <div className={styles.grid}>
-          {BOOKS.map((book) => (
-            <Post key={book.title} {...book} />
-          ))}
-        </div>
+        <p className={styles.status}>Loading books...</p>
       </section>
-    </>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className={styles.section}>
+        <p className={styles.status}>Error: {error}</p>
+      </section>
+    );
+  }
+
+  return (
+    <section className={styles.section}>
+      {/* Featured Books */}
+      <div className={styles.heading}>
+        <h3>Featured Books</h3>
+      </div>
+
+      <div className={styles.filters}>
+        {FILTERS.map((f) => (
+          <button
+            key={f}
+            className={`${styles.filterBtn} ${activeFilter === f ? styles.active : ""}`}
+            onClick={() => setActiveFilter(f)}
+          >
+            {f}
+          </button>
+        ))}
+      </div>
+
+      <div className={styles.grid}>
+        {filteredCopies.length > 0 ? (
+          filteredCopies.map((copy) => (
+            <Post
+              key={copy.id}
+              title={copy.title}
+              author={copy.author}
+              genre={copy.genre}
+              cover={copy.images?.[0] ?? "https://placehold.co/200x300?text=No+Cover"}
+              coverColor="#ffffff"
+              forRent={copy.for_rent}
+              forSale={copy.for_sale}
+              rentPrice={copy.rent_price_per_day}
+              buyPrice={copy.buy_price}
+              condition={copy.condition}
+              city={copy.location_city}
+            />
+          ))
+        ) : (
+          <p className={styles.status}>No books found for this filter.</p>
+        )}
+      </div>
+
+      {/* Trending Books */}
+      <div className={styles.heading}>
+        <h3>Trending Books</h3>
+      </div>
+
+      <div className={styles.grid}>
+        {trendingCopies.map((copy) => (
+          <Post
+            key={`trending-${copy.id}`}
+            title={copy.title}
+            author={copy.author}
+            genre={copy.genre}
+            cover={copy.images?.[0] ?? "https://placehold.co/200x300?text=No+Cover"}
+            coverColor="#ffffff"
+            forRent={copy.for_rent}
+            forSale={copy.for_sale}
+            rentPrice={copy.rent_price_per_day}
+            buyPrice={copy.buy_price}
+            condition={copy.condition}
+            city={copy.location_city}
+          />
+        ))}
+      </div>
+    </section>
   );
 };

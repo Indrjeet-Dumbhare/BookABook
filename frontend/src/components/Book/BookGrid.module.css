@@ -22,6 +22,11 @@
   margin: 20px 0;
 }
 
+.heading h3{
+  font-size: 25px;
+  font-weight: 600;
+}
+
 .subtext {
   font-size: 0.875rem;
   color: var(--muted);

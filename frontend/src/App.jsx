@@ -3,6 +3,9 @@ import { Home } from "./Pages/Home/Home";
 import "./App.css";
 import { SignIn } from "./Pages/Auth/SignIn";
 import { SignUp } from "./Pages/Auth/SignUp";
+import { Profile } from "./Pages/Profile/Profile";
+import { Cart } from "./Pages/Cart/Cart";
+import { UploadBook } from "./pages/UploadBook/UploadBook";
 
 function App() {
   return (
@@ -11,6 +14,9 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/uploadbook" element={<UploadBook />} />
       </Routes>
     </Router>
   );

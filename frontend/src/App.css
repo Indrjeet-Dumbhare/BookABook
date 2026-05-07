@@ -11,6 +11,7 @@ a {
 }
 
 :root {
+  --white: #fff;
   --cream: #fcf3e4;
   --parchment: #EDE5D4;
   --ink: #1A1208;

@@ -107,7 +107,7 @@ const login = async (req, res) => {
     return res.status(500).json({ error: 'Internal server error.' });
   }
 };
-s
+
 const getMe = async (req, res) => {
   try {
     const result = await pool.query(
