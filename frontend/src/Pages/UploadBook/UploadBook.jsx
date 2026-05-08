@@ -5,6 +5,7 @@ import { Footer } from "../../components/Footer/Footer";
 import styles from "./UploadBook.module.css";
 
 export const UploadBook = () => {
+
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [isbn, setIsbn] = useState("");
@@ -85,8 +86,9 @@ export const UploadBook = () => {
 
   return (
     <>
+    
       <Navbar />
-
+  
       <div className={styles.container}>
         <div className={styles.inner}>
           <h1 className={styles.heading}>List Your Book</h1>
@@ -211,8 +213,6 @@ export const UploadBook = () => {
             </div>
 
             <div className={styles.uploadSection}>
-              <h3 className={styles.uploadHeading}>Upload Book Images</h3>
-
               <p className={styles.uploadText}>
                 Please upload clear images of:
               </p>

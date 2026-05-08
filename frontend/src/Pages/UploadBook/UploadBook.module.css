@@ -44,6 +44,8 @@
   font-size: 16px;
   font-weight: 600;
   color: var(--brown);
+  justify-content: space-between;
+  max-width: 250px;
 }
 
 .imageRow{
@@ -51,13 +53,17 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 18px;
-  max-width: 500px;
+  max-width: 400px;
 }
 
 .imageLabel{
   font-size: 18px;
   font-weight: 600;
   color: var(--brown);
+}
+
+.uploadText{
+ margin-top: 20px;
 }
 
 .uploadBtn{
@@ -80,7 +86,7 @@
 }
 
 .button{
-  width: 120px;
+  width: 200px;
   height: 40px;
   border-radius: 10px;
   background-color: var(--brown);
@@ -91,5 +97,10 @@
   cursor: pointer;
   font-weight: 700;
   transition: 0.3s ease;
-  
+  margin-top: 40px;
+}
+
+.btncontainer{
+  display: flex;
+  justify-content: center;
 }
