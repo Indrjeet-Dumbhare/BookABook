@@ -136,8 +136,9 @@ export const createCopy = async (req, res) => {
     res.status(201).json({ message: "Copy listed", copy: result.rows[0] })
 
   } catch (error) {
-    console.error(error)
-    res.status(500).send("Server error")
+    console.error("Status:", error.response?.status);
+    console.error("Message:", error.response?.data);
+    alert("Failed: " + JSON.stringify(error.response?.data));
   }
 }
 

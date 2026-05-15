@@ -22,7 +22,7 @@ router.get("/user/me", authenticate, getMyCopies);
 
 router.get("/:id", getCopiesById);
 
-router.post("/copies", authenticate, createCopy);
+router.post("/", authenticate, createCopy); 
 
 router.put("/:id", authenticate, updateCopy);
 

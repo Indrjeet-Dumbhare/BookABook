@@ -5,14 +5,10 @@ import {authenticate,requireAdmin} from '../middleware/authMiddleware.js'
 
 const router = express.Router();
 
-router.get ('/books',getBooks);          
-
-router.get ('/books/:id', getBookById);       
-
-router.post('/books',authenticate, createBook);        
-
-router.patch('/books/:id', authenticate, updateBook);
-
-router.delete('/books/:id', authenticate, requireAdmin, deleteBook);
+router.get("/", getBooks);
+router.get("/:id", getBookById);
+router.post("/", authenticate, createBook);
+router.patch("/:id", authenticate, updateBook);
+router.delete("/:id", authenticate, requireAdmin, deleteBook);
 
 export default router;
