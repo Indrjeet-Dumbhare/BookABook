@@ -43,6 +43,55 @@ export const getCopiesById = async (req, res) => {
   }
 }
 
+export const getMyCopies = async (req, res) => {
+  try {
+    const result = await pool.query(
+      `
+      SELECT 
+        bc.*,
+        b.title,
+        b.author,
+        b.genre,
+
+        COALESCE(
+          json_agg(ci.image_url)
+          FILTER (WHERE ci.image_url IS NOT NULL),
+          '[]'
+        ) AS images
+
+      FROM book_copies bc
+
+      JOIN books b
+      ON bc.book_id = b.id
+
+      LEFT JOIN copy_images ci
+      ON ci.book_copy_id = bc.id
+
+      WHERE bc.owner_id = $1
+
+      GROUP BY 
+        bc.id,
+        b.title,
+        b.author,
+        b.genre
+
+      ORDER BY bc.listed_at DESC
+      `,
+      [req.user.id],
+    )
+
+    res.json({
+      copies: result.rows,
+    })
+  } catch (error) {
+    console.error(error)
+
+    res.status(500).json({
+      error: error.message,
+    })
+  }
+}
+
 export const createCopy = async (req, res) => {
   try {
     // ✅ owner_id comes from the authenticated cookie (set by auth middleware), not req.body

@@ -1,187 +1,192 @@
 import styles from "./Cart.module.css";
 import { RxCross2 } from "react-icons/rx";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CartItem } from "../../pages/Cart/CartItem";
+import axios from "axios";
+import { Navbar } from "../../components/Navbar/Navbar";
+
+const api = axios.create({
+  baseURL: "http://localhost:3000",
+  withCredentials: true,
+});
+
 
 export const Cart = () => {
   const navigate = useNavigate();
 
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "A Little Life",
-      price: 564,
-      oldPrice: 699,
-      image: "https://via.placeholder.com/80",
-      quantity: 1,
-    },
-  ]);
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading]     = useState(true);
+  const [error, setError]         = useState(null);
+  const [paying, setPaying]       = useState(null);
 
-  // 🔥 Quantity handlers
-  const increaseQty = (id) => {
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      )
-    );
-  };
+  // ── 1. Fetch this user's pending transactions ───────────────────────────────
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const { data } = await api.get("/transactions", {
+          params: { status: "pending" },
+        });
 
-  const decreaseQty = (id) => {
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      )
-    );
-  };
 
-  const handleDelete = (id) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
-  };
+        setCartItems(
+          data.data.map((tx) => ({
+            id:               tx.id,
+            book_copy_id:     tx.book_copy_id,
+            name:             tx.book_title,
+            author:           tx.book_author,
+            price:            Number(tx.amount),
+            transaction_type: tx.transaction_type,
+            rent_start_date:  tx.rent_start_date,
+            rent_end_date:    tx.rent_end_date,
+            image:            tx.cover_image ?? "https://via.placeholder.com/80",
+          }))
+        );
+      } catch (err) {
+        setError(err.response?.data?.error || err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // 🔥 Total calculation
-  const totalAmount = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+    fetchCart();
+  }, []);
 
-  // 🔥 Load Razorpay
-  const loadRazorpay = () => {
-    return new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-  };
-
-  // 🔥 Handle Payment
-  const handlePayment = async () => {
-    const loaded = await loadRazorpay();
-    if (!loaded) {
-      alert("Razorpay failed to load");
-      return;
+  // ── 2. Cancel (remove) a pending transaction ────────────────────────────────
+  const handleDelete = async (transactionId) => {
+    if (!window.confirm("Remove this item from cart?")) return;
+    try {
+      await api.patch(`/transactions/${transactionId}/cancel`, {
+        reason: "Removed from cart",
+      });
+      setCartItems((prev) => prev.filter((i) => i.id !== transactionId));
+    } catch (err) {
+      alert(`Could not remove item: ${err.response?.data?.error || err.message}`);
     }
+  };
+
+  // ── 3. Razorpay loader ──────────────────────────────────────────────────────
+  const loadRazorpay = () =>
+    new Promise((resolve) => {
+      if (window.Razorpay) return resolve(true);
+      const s = document.createElement("script");
+      s.src     = "https://checkout.razorpay.com/v1/checkout.js";
+      s.onload  = () => resolve(true);
+      s.onerror = () => resolve(false);
+      document.body.appendChild(s);
+    });
+
+  // ── 4. Pay for a single transaction ─────────────────────────────────────────
+  const handlePayment = async (transactionId) => {
+    const loaded = await loadRazorpay();
+    if (!loaded) return alert("Razorpay SDK failed to load.");
+
+    setPaying(transactionId);
 
     try {
-      // 1. Create order — send transaction_id, not amount
-      const res = await fetch("http://localhost:3000/api/payments/create-order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${yourAuthToken}`, // required — backend reads req.user
-        },
-        body: JSON.stringify({
-          transaction_id: yourTransactionId, // pass this as a prop or from context
-        }),
+      // Step A — create Razorpay order
+      const { data: orderData } = await api.post("/api/payments/create-order", {
+        transaction_id: transactionId,
       });
+      // orderData: { order_id, amount, currency, key_id, transaction_id }
 
-      const data = await res.json();
-
+      // Step B — open Razorpay checkout
       const options = {
-        key: data.key_id,           // ✅ use key from backend, not hardcoded
-        amount: data.amount,
-        currency: data.currency,
-        name: "BookABook",
-        description: "Order Payment",
-        order_id: data.order_id,    // ✅ was data.id — backend returns order_id
+        key:         orderData.key_id,
+        amount:      orderData.amount,
+        currency:    orderData.currency,
+        name:        "BookABook",
+        description: cartItems.find((i) => i.id === transactionId)?.name ?? "Order",
+        order_id:    orderData.order_id,
 
-        handler: async function (response) {
-          // 2. Verify payment — this is what actually marks the transaction active
+        handler: async (response) => {
+          // Step C — verify payment
           try {
-            const verifyRes = await fetch(
-              "http://localhost:3000/api/payments/verify",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${yourAuthToken}`,
-                },
-                body: JSON.stringify({
-                  razorpay_order_id: response.razorpay_order_id,
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature: response.razorpay_signature,
-                  transaction_id: data.transaction_id,
-                }),
-              }
-            );
+            await api.post("/api/payments/verify", {
+              razorpay_order_id:   response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature:  response.razorpay_signature,
+              transaction_id:      orderData.transaction_id,
+            });
 
-            const verifyData = await verifyRes.json();
-
-            if (verifyRes.ok) {
-              alert("Payment Successful ✅");
-              navigate("/orders"); // or wherever after payment
-            } else {
-              alert(`Verification failed: ${verifyData.error}`);
-            }
+            alert("Payment Successful ✅");
+            setCartItems((prev) => {
+              const updated = prev.filter((i) => i.id !== transactionId);
+              if (updated.length === 0) navigate("/orders");
+              return updated;
+            });
           } catch (err) {
-            console.error("Verify error:", err);
-            alert("Payment verification failed");
+            alert(`Verification failed: ${err.response?.data?.error || err.message}`);
+          } finally {
+            setPaying(null);
           }
         },
 
-        prefill: {
-          name: "Saurabh",
-          email: "test@gmail.com",
+        modal: {
+          ondismiss: () => setPaying(null),
         },
-        theme: {
-          color: "#ff6b00",
-        },
+
+        prefill: { name: "", email: "" },
+        theme:   { color: "#ff6b00" },
       };
 
-      const paymentObject = new window.Razorpay(options);
-      paymentObject.open();
+      new window.Razorpay(options).open();
     } catch (err) {
-      console.error(err);
-      alert("Payment failed");
+      alert(`Payment failed: ${err.response?.data?.error || err.message}`);
+      setPaying(null);
     }
   };
 
+  // ── 5. Total ────────────────────────────────────────────────────────────────
+  const totalAmount = cartItems.reduce((sum, i) => sum + i.price, 0);
+
+  // ── 6. Render ───────────────────────────────────────────────────────────────
   return (
+    <>
+    <Navbar></Navbar>
     <div className={styles.cart}>
-      {/* Header */}
       <div className={styles.header}>
         <h2>
-          My Cart{" "}
-          <span className={styles.count}>{cartItems.length}</span>
+          My Cart <span className={styles.count}>{cartItems.length}</span>
         </h2>
-        <RxCross2
-          className={styles.close}
-          onClick={() => {
-            navigate("/");
-          }}
-        />
+        <RxCross2 className={styles.close} onClick={() => navigate("/")} />
       </div>
 
-      {/* Items */}
+      {loading && <p style={{ padding: "10px" }}>Loading cart…</p>}
+      {error   && <p style={{ padding: "10px", color: "red" }}>{error}</p>}
+      {!loading && !error && cartItems.length === 0 && (
+        <p style={{ padding: "10px" }}>Your cart is empty.</p>
+      )}
+
       {cartItems.map((item) => (
         <CartItem
           key={item.id}
           item={item}
-          onDelete={handleDelete}
-          onIncrease={increaseQty}
-          onDecrease={decreaseQty}
+          onDelete={() => handleDelete(item.id)}
         />
       ))}
 
-      <hr />
-
-      {/* Total */}
-      <div style={{ padding: "10px", fontWeight: "bold" }}>
-        Total: ₹{totalAmount}
-      </div>
-
-      {/* Pay Button */}
-      <div className={styles.cta}>
-        <button className={styles.ctabtn} onClick={handlePayment}>
-          Pay Now
-        </button>
-      </div>
+      {cartItems.length > 0 && (
+        <>
+          <hr />
+          <div style={{ padding: "10px", fontWeight: "bold" }}>
+            Total: ₹{totalAmount}
+          </div>
+          <div className={styles.cta}>
+            {cartItems.map((item) => (
+              <button
+                key={item.id}
+                className={styles.ctabtn}
+                disabled={paying === item.id}
+                onClick={() => handlePayment(item.id)}
+              >
+                {paying === item.id ? "Processing…" : `Pay ₹${item.price} — ${item.name}`}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
     </div>
+    </>
   );
 };

@@ -21,17 +21,14 @@
   max-width: 250px;
   cursor: pointer;
   display: flex;
-  align-items: center;  
+  align-items: center;
   justify-content: flex-start;
   gap: 8px;
   color: var(--brown);
-
-  
 }
 
 .profile{
   height: 80px;
-  
 }
 
 .profilePic{
@@ -41,8 +38,9 @@
   width: 60px;
   height: 60px;
 }
+
 .profileIcon{
-color: var(--brown);
+  color: var(--brown);
 }
 
 .details{
@@ -51,8 +49,8 @@ color: var(--brown);
   background-color: white;
   border-radius: 30px;
   margin: 0px 10px;
-  display: flex;
   flex-direction: column;
+  padding-bottom: 40px;
 }
 
 h2{
@@ -62,14 +60,12 @@ h2{
   font-weight: 600;
   width: 100%;
   height: 50px;
- 
 }
 
 .info{
   margin: 10px 30px;
   display: flex;
   gap: 16px;
-
 }
 
 h3{
@@ -84,18 +80,208 @@ h3{
   height: 50px;
   margin: 10px 0px;
   padding-left: 12px;
-  
 }
 
 .input::placeholder{
-  
   color: rgb(148, 148, 148);
   font-size: 16px;
-  
 }
 
-input:focus {
+input:focus{
   outline: none;
   box-shadow: none;
 }
 
+/* UPLOADED BOOKS SECTION */
+
+.uploadedBooks{
+  margin: 40px 30px;
+}
+
+.bookHeading{
+  color: var(--brown);
+  margin-bottom: 30px;
+}
+
+.bookGrid{
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 25px;
+}
+
+.bookCard{
+  background-color: rgb(248,248,248);
+  border-radius: 20px;
+  padding: 16px;
+}
+
+.bookImage{
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+.bookTitle{
+  margin-top: 15px;
+  font-size: 20px;
+  color: var(--brown);
+}
+
+.bookAuthor{
+  color: gray;
+  margin-top: 5px;
+}
+
+.bookPrice{
+  margin-top: 12px;
+  display: flex;
+  gap: 12px;
+  font-weight: 600;
+  color: var(--brown);
+}
+
+.bookButtons{
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.editBtn,
+.deleteBtn{
+  flex: 1;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: 0.3s ease;
+}
+
+
+.editBtn:hover{
+  transform: translateY(-2px);
+  background-color: var(--dark-amber);
+}
+.deleteBtn:hover{
+  transform: translateY(-2px);
+  background-color: red;
+  
+}
+
+/* UPLOADED BOOK SECTION */
+
+.uploadSection{
+  width: 92%;
+  margin: 40px auto;
+  background-color: white;
+  border-radius: 30px;
+  padding: 30px;
+}
+
+.bookHeading{
+  color: var(--brown);
+  margin-bottom: 30px;
+  font-size: 35px;
+  font-weight: 700;
+}
+
+.bookGrid{
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.bookCard{
+  background-color: rgb(241, 241, 241);
+  border-radius: 24px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.bookImage{
+  width: 120px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 18px;
+  flex-shrink: 0;
+}
+
+.bookInfo{
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bookText{
+  display: flex;
+  flex-direction: column;
+}
+
+.bookTitle{
+  font-size: 20px;
+  color: var(--brown);
+  font-weight: 700;
+  line-height: 42px;
+}
+
+.bookAuthor{
+  font-size: 16px;
+  color: gray;
+  margin-top: 10px;
+}
+
+.bookPrice{
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.priceTag{
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--brown);
+}
+
+.bookButtons{
+  display: flex;
+  gap: 14px;
+}
+
+.editBtn,
+.deleteBtn{
+  width: 100px;
+  height: 40px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.editBtn{
+  background-color: var(--brown);
+  color: white;
+}
+
+.deleteBtn{
+  background-color: rgb(222, 56, 56);
+  color: white;
+}
+
+.editBtn:disabled,
+.deleteBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

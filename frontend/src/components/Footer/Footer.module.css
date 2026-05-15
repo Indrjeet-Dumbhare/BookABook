@@ -1,35 +1,169 @@
-.footer{
-  margin: 40px;
-  width: 1230px;
-  height: 400px;
-  border-radius: 30px;
-  background-color: var(--brown);
+.footer {
+  width: min(95%, 95%);
+  margin: 40px auto;
+
+  background: var(--brown);
+  border-radius: 24px;
+
+  padding: 45px 50px 25px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+
+  box-sizing: border-box;
 }
 
-.footerContent{
-  padding-block: 20px;
-  margin-left: 20px;
+/* ================= CONTENT ================= */
+
+.footerContent {
   display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 60px;
+
+  flex-wrap: wrap;
 }
 
-.logo {
+/* ================= BRAND ================= */
+
+.brandSection {
+  flex: 1;
+  min-width: 280px;
+  max-width: 380px;
+}
+
+.brand {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-  margin: 20px 20px;
-  max-width: 400px;
+  align-items: flex-start;
+  gap: 14px;
+
+  cursor: pointer;
 }
 
 .logoIcon {
-  font-size: 25px;
-  margin-top: 3px;
+  font-size: 36px;
+  line-height: 1;
 }
 
 .logoText {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 700;
+
   color: var(--cream);
-  letter-spacing: -0.02em;
+
+  margin-bottom: 30px;
+}
+
+.tagline {
+  color: rgba(255, 255, 255, 0.75);
+
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+/* ================= LINKS ================= */
+
+.linksWrapper {
+  display: flex;
+  gap: 70px;
+
+  flex-wrap: wrap;
+}
+
+.footerSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  min-width: 160px;
+}
+
+.footerSection h3 {
+  color: var(--cream);
+
+  font-size: 17px;
+  font-weight: 600;
+
+  margin-bottom: 10px;
+}
+
+.footerSection span {
+  color: rgba(255, 255, 255, 0.75);
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.footerSection span:hover {
+  color: white;
+  transform: translateX(3px);
+}
+
+/* ================= BOTTOM ================= */
+
+.bottomBar {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+
+  padding-top: 20px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.bottomBar p {
+  color: rgba(255, 255, 255, 0.65);
+
+  font-size: 14px;
+}
+
+.bottomLinks {
+  display: flex;
+  gap: 22px;
+
+  flex-wrap: wrap;
+}
+
+.bottomLinks span {
+  color: rgba(255, 255, 255, 0.65);
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.bottomLinks span:hover {
+  color: white;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 35px 25px 20px;
+  }
+
+  .footerContent {
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .linksWrapper {
+    gap: 40px;
+  }
+
+  .bottomBar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

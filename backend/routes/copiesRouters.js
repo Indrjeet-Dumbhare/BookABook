@@ -1,24 +1,31 @@
-import express from 'express'
-import {
-    getCopies,
-    getCopiesById,
-    createCopy,
-    updateCopy,
-    deleteCopy
-} from '../controllers/copiesController.js'
-import {authenticate,requireAdmin} from '../middleware/authMiddleware.js'
+import express from "express";
 
+import {
+  getCopies,
+  getCopiesById,
+  createCopy,
+  updateCopy,
+  deleteCopy,
+  getMyCopies,
+} from "../controllers/copiesController.js";
+
+import {
+  authenticate,
+  requireAdmin,
+} from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get ('/', getCopies);        
+router.get("/", getCopies);
 
-router.get ('/:id', getCopiesById);       
+router.get("/user/me", authenticate, getMyCopies);
 
-router.post('/',authenticate, createCopy);  
+router.get("/:id", getCopiesById);
 
-router.patch('/:id',authenticate, updateCopy);
+router.post("/copies", authenticate, createCopy);
 
-router.delete('/:id',authenticate, deleteCopy);
+router.put("/:id", authenticate, updateCopy);
+
+router.delete("/:id", authenticate, deleteCopy);
 
 export default router;

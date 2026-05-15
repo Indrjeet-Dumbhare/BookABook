@@ -1,43 +1,91 @@
-import styles from "../Cart/Cart.module.css";
+import styles from "./Cart.module.css";
 import { RiDeleteBin6Line } from "react-icons/ri";
 
-export const CartItem = ({ item, onDelete, onIncrease, onDecrease }) => {
+export const CartItem = ({
+  item,
+  onDelete,
+}) => {
+
   return (
+
     <div className={styles.item}>
-      <img src={item.image} alt="book" />
 
+      {/* IMAGE */}
+      <img
+        src={
+          item.image_url ||
+          item.cover
+        }
+        alt={item.title}
+        className={styles.bookImage}
+      />
+
+      {/* DETAILS */}
       <div className={styles.details}>
-        <h3>{item.name}</h3>
 
-        <div className={styles.qty}>
-          <button
-            onClick={() => {
-              if (item.quantity > 1) onDecrease(item.id);
-            }}
-          >
-            -
-          </button>
+        <h3 className={styles.bookTitle}>
+          {item.title}
+        </h3>
 
-          <span>{item.quantity}</span>
+        <p className={styles.author}>
+          by {item.author}
+        </p>
 
-          <button onClick={() => onIncrease(item.id)}>+</button>
+        <div className={styles.transactionType}>
+
+          {item.transaction_type ===
+          "buy"
+            ? "Purchase"
+            : "Rental"}
+
         </div>
+
+        <div className={styles.status}>
+
+          Status:
+          {" "}
+          {item.status}
+
+        </div>
+
       </div>
 
+      {/* PRICE */}
       <div className={styles.priceSection}>
+
         <RiDeleteBin6Line
           className={styles.delete}
-          onClick={() => onDelete(item.id)}
+          onClick={() =>
+            onDelete(item.id)
+          }
         />
 
         <div className={styles.price}>
-          ₹{item.price} <span className={styles.old}>₹{item.oldPrice}</span>
+
+          ₹
+          {Number(
+            item.buy_price ||
+            item.buyPrice ||
+            0
+          )}
+
         </div>
 
-        <div className={styles.offer}>
-          ₹{item.oldPrice - item.price} OFF
-        </div>
+        {(item.rent_price_per_day ||
+          item.rentPrice) && (
+          <div
+            className={styles.rentPrice}
+          >
+            Rent:
+            ₹
+            {item.rent_price_per_day ||
+              item.rentPrice}
+            /day
+          </div>
+        )}
+
       </div>
+
     </div>
   );
 };

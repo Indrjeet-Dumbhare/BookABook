@@ -27,7 +27,7 @@ export const BookGrid = () => {
         const res = await fetch("http://localhost:3000/copies");
         if (!res.ok) throw new Error("Failed to fetch books");
         const data = await res.json();
-        setCopies(data.copies);
+        setCopies(data.copies.filter((copy) => copy.status === "available"));
   
       } catch (err) {
         setError(err.message);
@@ -91,6 +91,7 @@ export const BookGrid = () => {
             <Post
               key={copy.id}
               title={copy.title}
+              bookCopyId={copy.id}  
               author={copy.author}
               genre={copy.genre}
               cover={copy.images?.[0] ?? "https://placehold.co/200x300?text=No+Cover"}
@@ -118,6 +119,7 @@ export const BookGrid = () => {
           <Post
             key={`trending-${copy.id}`}
             title={copy.title}
+            bookCopyId={copy.id} 
             author={copy.author}
             genre={copy.genre}
             cover={copy.images?.[0] ?? "https://placehold.co/200x300?text=No+Cover"}
